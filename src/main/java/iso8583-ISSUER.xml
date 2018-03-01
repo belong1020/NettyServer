@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iso8583-config>
+
+	<!-- 长度全部都是字节数（由自己换算,LLVAR,LLLVAR,LLVAR_NUMERIC等变长数据域定义的长度无效） -->
+
+	<!-- 统一头，每次不管请求还是响应都包含的共同内容 -->
+	<header>
+		<field id="compress" type="NUMERIC" length="1" />
+		<field id="source" type="CHAR" length="4" />
+		<field id="network" type="CHAR" length="4" />
+		<field id="mti" type="NUMERIC" length="4" />			<!-- * 4字节 16进制数 BCD -->
+		<field id="bitemap" type="LLVAR" length="192"/>
+	</header>
+
+	<!-- 测试类型 0100 -->
+	<package>
+		<!-- primary account number -->
+		<field id="2" type="LLVAR_NUMERIC" length="19" />
+		<!-- processing code -->
+		<field id="3" type="NUMERIC" length="6" />
+		<!-- Amount, Transaction -->
+		<field id="4" type="NUMERIC" length="12" />
+		<!-- Amount Settlement -->
+		<field id="5" type="NUMERIC" length="12" />
+		<!-- Amount Cardholder Billing -->
+		<field id="6" type="NUMERIC" length="12" />
+		<!-- Transaction Date and Time -->
+		<field id="7" type="NUMERIC" length="10" />
+		<!-- XXX -->
+		<field id="8" type="NUMERIC" length="8" />
+		<!-- Conversion Rate, Settlement -->
+		<field id="9" type="NUMERIC" length="8" />
+		<!-- Conversion Rate Cardholder billing -->
+		<field id="10" type="NUMERIC" length="8" />
+		<!-- System Trace Audit Number -->
+		<field id="11" type="NUMERIC" length="6" />
+		<!-- Time, Local Transaction hhmmss-->
+		<field id="12" type="NUMERIC" length="12" />
+		<!-- Date, Local Transaction MMDD-->
+		<field id="13" type="NUMERIC" length="4" />
+		<!-- Date, Expiration YYMM-->
+		<field id="14" type="NUMERIC" length="4" />
+		<!-- Date, Settlement MMDD-->
+		<field id="15" type="NUMERIC" length="6" />
+		<!-- Date, Conversion MMDD-->
+		<field id="16" type="NUMERIC" length="4" />
+		<!-- XXX -->
+		<field id="17" type="NUMERIC" length="6" />
+		<!-- Merchant Type -->
+		<field id="18" type="NUMERIC" length="4" />
+		<!-- Acquiring Institution Country Code -->
+		<field id="19" type="NUMERIC" length="3" />
+		<!-- XXX -->
+		<field id="20" type="NUMERIC" length="3" />
+		<!-- XXX -->
+		<field id="21" type="NUMERIC" length="3" />
+		<!-- Point-of-Service (POS) Entry Mode -->
+		<field id="22" type="CHAR" length="12" />
+		<!-- Card Sequence Number -->
+		<field id="23" type="NUMERIC" length="3" />
+		<!-- XXX -->
+		<field id="24" type="NUMERIC" length="3" />
+		<!-- Point-of-Service (POS) Condition Code -->
+		<field id="25" type="NUMERIC" length="4" />
+		<!-- POS PIN Capture Code -->
+		<field id="26" type="NUMERIC" length="4" />
+		<!-- XXX -->
+		<field id="27" type="NUMERIC" length="1" />
+		<!-- XXX -->		
+		<field id="28" type="CHAR" length="0" />	
+		<!-- XXX -->	
+		<field id="29" type="CHAR" length="0" />		
+		<!-- XXX -->
+		<field id="30" type="NUMERIC" length="24" />
+		<!-- XXX -->
+		<field id="31" type="CHAR" length="0" />
+		<!-- Acquiring Institution Identification Code -->						
+		<field id="32" type="LLVAR_NUMERIC" length="11"/>
+		<!-- Forwarding Institution Identification Code -->
+		<field id="33" type="LLVAR_NUMERIC" length="11"/>
+		<!-- XXX -->
+		<field id="34" type="LLVAR" length="28" />
+		<!-- Track 2 data -->
+		<field id="35" type="LLVAR" length="37"/>
+		<!-- Track 3 Data -->
+		<field id="36" type="LLLVAR" length="104"/>
+		<!-- Retrieval Reference Number -->
+		<field id="37" type="CHAR" length="12" />
+		<!-- Authorization Identification Response -->
+		<field id="38" type="CHAR" length="6" />
+		<!-- Response Code -->
+		<field id="39" type="NUMERIC" length="3" />
+		<!-- XXX -->
+		<field id="40" type="NUMERIC" length="3" />
+		<!-- Card Acceptor Terminal Identification -->
+		<field id="41" type="CHAR" length="8" />
+		<!-- Card Acceptor Identification Code -->
+		<field id="42" type="CHAR" length="15" />
+		<!-- Card Acceptor Name/Location -->
+		<field id="43" type="LLVAR" length="99"/>
+		<!-- Additional Response Data ????-->
+		<field id="44" type="LLLVAR" length="255"/>
+		<!-- Track 1 data -->
+		<field id="45" type="LLVAR" length="76"/>
+		<!-- XXX -->
+		<field id="46" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="47" type="CHAR" length="0"/>
+		<!-- Additional Data Private???? -->
+		<field id="48" type="LLLVAR" length="510"/>
+		<!-- Currency Code, Transaction -->
+		<field id="49" type="NUMERIC" length="3" />
+		<!-- Currency Code, Settlement -->
+		<field id="50" type="NUMERIC" length="3" />
+		<!-- Currency Code, Cardholder Billing -->
+		<field id="51" type="NUMERIC" length="3" />
+		<!-- Pin Data -->
+		<field id="52" type="CHAR" length="16" />
+		<!-- Security Related Control Information -->
+		<field id="53" type="LLlVAR" length="120"/>
+		<!-- Additional Amounts ????-->
+		<field id="54" type="LLLVAR_NUMERIC" length="120"/>
+		<!-- ICC System Related Data ???-->
+		<field id="55" type="LLlVAR" length="400"/>
+		<!-- XXX ???-->
+		<field id="56" type="LLLVAR_NUMERIC" length="255"/>
+		<!-- Additional Data Private -->
+		<field id="57" type="CHAR" length="0"/>
+		<!-- PBOC Data Reserved -->		
+		<field id="58" type="CHAR" length="0"/>
+		<!-- Detail Inquiring -->
+		<field id="59" type="LLlVAR" length="255"/>
+		<!-- Reserved -->
+		<field id="60" type="LLlVAR" length="126"/>
+		<!-- Cardholder Authentication Information ???-->
+		<field id="61" type="LLlVAR" length="236"/>
+		<!-- Switching Data -->
+		<field id="62" type="LLlVAR" length="259"/>
+		<!-- Finacial Network Data -->
+		<field id="63" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="64" type="CHAR" length="16"/>
+		<!-- XXX -->
+		<field id="65" type="CHAR" length="16"/>
+		<!-- Settlement Code -->
+		<field id="66" type="NUMERIC" length="1"/>
+		<!-- XXX -->
+		<field id="67" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="68" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="69" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="70" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="71" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="72" type="LLlVAR" length="255"/>
+		<!-- XXX -->
+		<field id="73" type="CHAR" length="0"/>
+		<!-- Credits, Number -->
+		<field id="74" type="CHAR" length="0"/>
+		<!-- Credits, Reversal Number -->
+		<field id="75" type="CHAR" length="0"/>
+		<!-- Debits Number -->
+		<field id="76" type="CHAR" length="0"/>
+		<!-- Debits, Reversal Number -->
+		<field id="77" type="CHAR" length="0"/>
+		<!-- Transfer Number -->
+		<field id="78" type="CHAR" length="0"/>
+		<!-- Transfer,Reversal Number -->
+		<field id="79" type="CHAR" length="0"/>
+		<!-- Inquiries Number -->
+		<field id="80" type="CHAR" length="0"/>
+		<!-- Authorizationa Number -->
+		<field id="81" type="CHAR" length="0"/>
+		<!-- Processing Fee Amount Of Credits -->
+		<field id="82" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="83" type="CHAR" length="0"/>
+		<!-- Processing Fee Amount Of Debits -->
+		<field id="84" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="85" type="CHAR" length="0"/>
+		<!-- Credits, Amount -->
+		<field id="86" type="CHAR" length="0"/>
+		<!-- Credits, Reversal Amount -->
+		<field id="87" type="CHAR" length="0"/>
+		<!-- Debits, Amount -->
+		<field id="88" type="CHAR" length="0"/>
+		<!-- Debits, Reversal Amount -->
+		<field id="89" type="CHAR" length="0"/>
+		<!-- Original Data Elements -->
+		<field id="90" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="91" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="92" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="93" type="LLVAR_NUMERIC" length="11"/>
+		<!-- XXX -->
+		<field id="94" type="LLVAR_NUMERIC" length="11"/>
+		<!-- Replacement Amounts -->
+		<field id="95" type="CHAR" length="0"/>
+		<!-- Message Security Code -->
+		<field id="96" type="CHAR" length="0"/>
+		<!-- Amount, Net Settlement -->
+		<field id="97" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="98" type="CHAR" length="0"/>
+		<!-- Settlement Institution Identification Code -->
+		<field id="99" type="CHAR" length="0"/>
+		<!-- Receiving Institution Identification Code -->
+		<field id="100" type="LLVAR_NUMERIC" length="11"/>
+		<!-- XXX -->
+		<field id="101" type="LLVAR_NUMERIC" length="17"/>
+		<!-- Account Identification 1 -->
+		<field id="102" type="LLVAR_NUMERIC" length="28"/>
+		<!-- Account Identification 2 -->
+		<field id="103" type="LLVAR_NUMERIC" length="28"/>
+		<!-- Transaction Description -->
+		<field id="104" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="105" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="106" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="107" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="108" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="109" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="110" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="111" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="112" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="113" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="114" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="115" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="116" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="117" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="118" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="119" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="120" type="CHAR" length="0"/>
+		<!-- Reserved -->
+		<field id="121" type="LLlVAR" length="600"/>
+		<!-- Acquiring Institution Reserved -->
+		<field id="122" type="CHAR" length="0"/>
+		<!-- Issuer Institution Reserved -->
+		<field id="123" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="124" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="125" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="126" type="CHAR" length="0"/>
+		<!-- XXX -->
+		<field id="127" type="CHAR" length="0"/>
+		<!-- Message Authentication Code -->
+		<field id="128" type="CHAR" length="16" />
+	</package>
+
+</iso8583-config>
