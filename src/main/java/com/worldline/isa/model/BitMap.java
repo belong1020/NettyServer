@@ -55,11 +55,26 @@ public class BitMap {
 		return getBitMap();
 	}
 	
-	public byte[] addBits(String regix){
+	//regix = "1,2,4,11,13"(int)
+	/*public byte[] addBits(String regix){
 		String[] vals = regix.split(",");
 		for(String val:vals){
 			//本处-1的原因是，BitMap在1~64之间，而实际存储为0~63
 			addBit(Integer.valueOf(val)-1);
+		}
+		return getBitMap();
+	}*/
+	
+	//regix = "111000100111"(binary)
+	public byte[] addBits(String regix){
+		String[] vals = regix.split("");
+		int count = 0;
+		for(String val:vals){
+			//本处-1的原因是，BitMap在1~64之间，而实际存储为0~63
+			if ("1".equals(val)) {
+				addBit(count);
+			}
+			count++;
 		}
 		return getBitMap();
 	}
@@ -150,7 +165,7 @@ public class BitMap {
 		return accum.toString();
 	}
 	
-/*
+
 	public static void main(String[] args) {
 //		BitMap bitArray = new BitMap(64);
 //		bitArray.addBits("1,2,15,");
@@ -179,5 +194,5 @@ public class BitMap {
 			c++;
 		}
 		System.out.println(accum.toString());
-	}*/
+	}
 }

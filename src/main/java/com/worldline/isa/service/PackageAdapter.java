@@ -69,30 +69,27 @@ public class PackageAdapter {
 	 * @param configName
 	 *            卡商规则 @Return：byte[] 返回byte数组
 	 */
-	public static byte[] packAdapter(Map<String, String> dataMap, String configName) {
-		return instance().packByConfig(dataMap, configName);
+	public static byte[] packAdapter(Map<String, String> dataMap, String configName, IsoPackage pendPack) {
+		return instance().packByConfig(dataMap, configName, pendPack);
 	}
 
-	public static byte[] packAdapter(Map<String, String> dataMap) {
-		return instance().packByConfig(dataMap, DEFAULT_CONFIG);
+	public static byte[] packAdapter(Map<String, String> dataMap, IsoPackage pendPack) {
+		return instance().packByConfig(dataMap, DEFAULT_CONFIG, pendPack);
 	}
 
-	public byte[] packByConfig(Map<String, String> dataMap, String configName) {
+	public byte[] packByConfig(Map<String, String> dataMap, String configName, IsoPackage pendPack) {
 		byte[] sendData = null;
 		try {
 			// factory.setMacKey(macKey);
-			// XmlReader config = this.getConfig(configName);
-			// IsoPackage pack = config.getIsoConfig().get("iso8583");
-			// sendData = factory.pack(dataMap, pack);
-			sendData = factory.pack(dataMap, deepClone);
+			 XmlReader config = this.getConfig(configName);
+			 IsoPackage pack = config.getIsoConfig().get("iso8583");
+			 pendPack = pack.deepClone();
+			
+			sendData = factory.pack(dataMap, pendPack);
 
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
-			new Simple8583Exception("PackageAdapter : " + "ClassNotFoundException");
-		} catch (IOException e) {
-			e.printStackTrace();
-			new Simple8583Exception("PackageAdapter : " + "IOException");
 		}
 
 		return sendData;
@@ -119,8 +116,6 @@ public class PackageAdapter {
 		// 预留get ,
 		IsoPackage pack = config.getIsoConfig().get("iso8583");
 		
-		IsoPackage deepClone = pack.deepClone();
-
-		return factory.unpack(buf, deepClone);
+		return factory.unpack(buf, pack);
 	}
 }

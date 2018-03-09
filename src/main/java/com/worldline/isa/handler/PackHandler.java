@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.worldline.isa.model.IsoPackage;
 import com.worldline.isa.service.PackageAdapter;
 
 import io.netty.buffer.ByteBuf;
@@ -14,7 +15,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.ReferenceCountUtil;
 
 /**
  * 数据打包Handler 类
@@ -24,6 +24,8 @@ import io.netty.util.ReferenceCountUtil;
 @Sharable
 public class PackHandler extends ChannelInboundHandlerAdapter {
 
+	private IsoPackage packClone;
+	
 	private static Logger logger = LoggerFactory.getLogger(PackHandler.class);
 	/**
 	 * 接收消息, 将业务处理完成后结果返回pos 端
@@ -39,7 +41,7 @@ public class PackHandler extends ChannelInboundHandlerAdapter {
 
 		Map<String, String> returMap = (Map<String, String>) msg;
 		
-		byte[] res = PackageAdapter.packAdapter(returMap);
+		byte[] res = PackageAdapter.packAdapter(returMap, packClone);
 
 		ByteBuf in = Unpooled.wrappedBuffer(res);
 		

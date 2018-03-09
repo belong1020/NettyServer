@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import com.worldline.isa.model.IsoPackage;
 import com.worldline.isa.service.PackageAdapter;
 
 import io.netty.buffer.ByteBuf;
@@ -26,6 +27,8 @@ import io.netty.util.CharsetUtil;
 // 标记该类的实例可以被多个 Channel 共享
 public class TestClientHandler0001 extends SimpleChannelInboundHandler<ByteBuf> {
 
+	IsoPackage pendPack;
+	
 	private long start;
 	private long end = System.currentTimeMillis();
 
@@ -138,7 +141,7 @@ public class TestClientHandler0001 extends SimpleChannelInboundHandler<ByteBuf> 
 		message.put("128", "3344393131373546");
 
 		byte[] res;
-		res = PackageAdapter.packAdapter(message);
+		res = PackageAdapter.packAdapter(message, pendPack);
 
 		ByteBuf copiedBuffer = Unpooled.copiedBuffer(new String(), CharsetUtil.UTF_8);
 

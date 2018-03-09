@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.worldline.isa.model.IsoPackage;
 import com.worldline.isa.service.PackageAdapter;
 import com.worldline.isa.util.TraceGenerator;
 
@@ -25,6 +26,7 @@ import io.netty.util.AttributeKey;
 // 标示一个ChannelHandler可以被多个 Channel 安全地共享
 @Sharable
 public class UnpackHandler extends ChannelInboundHandlerAdapter {
+	
 	//log
 	private static Logger logger = LoggerFactory.getLogger(UnpackHandler.class);
 	//全局INDEX

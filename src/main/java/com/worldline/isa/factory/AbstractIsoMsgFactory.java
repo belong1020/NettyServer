@@ -34,44 +34,69 @@ public abstract class AbstractIsoMsgFactory {
 	}
 
 	// 入口和出口
-	public byte[] pack(Map<String, String> dataMap, final IsoPackage pack) throws IOException, ClassNotFoundException {
-		// 深度拷贝，对拷贝后的对象进行操作，
-		// IsoPackage packClone = pack.deepClone();
-//		dataFieldList   bitmap对应list
-		List<Integer> dataFieldList = new ArrayList<Integer>(dataMap.size());
-		for (String key : dataMap.keySet()) {
-			IsoField field = pack.getIsoField(key);
-			if (field == null) {
-				continue;
-			}
-			field.setValue(dataMap.get(key));
-			// 数据域
-			if (SimpleUtil.isNumeric(key)) {
-				int val = Integer.valueOf(key);
-				if (pack.isBit64() && val > 64) {
-					// 设置位非64位图模式，即128模式
-					pack.setBit64(false);
-					// 将bitMap第一位置为1，表示这个数据域为128位长
-					dataFieldList.add(1);
-				}
-				dataFieldList.add(val);
-			}
-		}
-		// 生成BitMap
-		BitMap bitMap = null;
-		if (pack.isBit64()) {
+	public byte[] pack(Map<String, String> dataMap, final IsoPackage pack) throws Exception {
+		String split = dataMap.get(SimpleConstants.BIT_MAP);
+		StringBuilder sb = new StringBuilder();
+				
+		byte[] bitMapByte ;// = dataMap.get(SimpleConstants.BIT_MAP).toString().getBytes();
+		BitMap bitMap = new BitMap(split.length());
+		bitMapByte = bitMap.addBits(dataMap.get(SimpleConstants.BIT_MAP));
+		pack.getIsoField(SimpleConstants.BIT_MAP).setByteValue(bitMapByte);
+		
+//		BitMap bitMap = null;
+		if (dataMap.get(SimpleConstants.BIT_MAP).length() < 65) {
 			bitMap = new BitMap(64);
 		} else {
+			pack.setBit64(false);
 			bitMap = new BitMap(128);
 		}
-		byte[] bitMapByte = bitMap.addBits(dataFieldList);
-		// 设置BitMap的值
+//		byte[] bitMapByte = bitMap.addBits(dataFieldList);
 		pack.getIsoField(SimpleConstants.BIT_MAP).setByteValue(bitMapByte);
+		
+		compare(dataMap);
 
-		// 子域合并
-		compare(pack);
+		// 设置BitMap的值
+		IsoField BitField = pack.getIsoField(SimpleConstants.BIT_MAP);
+		// BitField.setValue(dataMap.get(SimpleConstants.BIT_MAP));
+		BitField.setByteValue(bitMapByte);
+
+		for (IsoField field : pack) {
+			String fieldValue;
+			if (field.isAppData()) {
+				fieldValue = dataMap.get(field.getId());
+				if (fieldValue == null || field.getId().indexOf(".") > 0) {
+					continue;
+				}
+				// 其他域值
+				int index = Integer.valueOf(field.getId());
+				if (index == 1) {
+					continue;// 第一位不处理，只是标志位
+				}
+				if (bitMap.getBit(index - 1) == 1) {
+					field.setValue(fieldValue);
+					field.setByteValue(fieldValue.getBytes());
+				}
+			} else {
+				fieldValue = dataMap.get(field.getId());
+				if (fieldValue == null) {
+					continue;
+				}
+				if (!SimpleConstants.BIT_MAP.equals(field.getId())) {
+					field.setValue(fieldValue);
+				}
+				// field.setByteValue(fieldValue.getBytes());
+			}
+		}
 
 		// 将数组合并
+		switch ("") {
+		case "MASTER":
+			break;
+		case "VISA":
+			break;
+		case "UnionPay":
+			return merge(pack);
+		}
 		return merge(pack);
 	}
 
@@ -87,6 +112,7 @@ public abstract class AbstractIsoMsgFactory {
 		if (pack == null || pack.size() == 0) {
 			throw new IllegalArgumentException("配置为空，请检查IsoPackage是否为空");
 		}
+		IsoPackage deepClone = pack.deepClone();
 		Map<String, String> returnMap = new LinkedHashMap<String, String>();
 		// 起判断的作用
 		int offset = 0;
@@ -95,10 +121,11 @@ public abstract class AbstractIsoMsgFactory {
 		BitMap bitMap = null;
 		// 0 - 60 1 - 90
 		byte[] index_xx = new byte[2];
-		
-		Map<IsoField, Integer> fldLensMap = new IdentityHashMap<IsoField, Integer>();
 
-		for (IsoField field : pack) {
+		// Map<IsoField, Integer> fldLensMap = new IdentityHashMap<IsoField,
+		// Integer>();
+
+		for (IsoField field : deepClone) {
 			if (field.isAppData()) {
 				if (hasBitMap) {
 					// 子域在此拆分已存进returnMap 中父域
@@ -140,6 +167,7 @@ public abstract class AbstractIsoMsgFactory {
 		}
 		// MAC校验
 		// macValidate(pack,returnMap);
+		deepClone = null;
 
 		return returnMap;
 	}
@@ -180,7 +208,7 @@ public abstract class AbstractIsoMsgFactory {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	private int subByte(byte[] bts, int offset, IsoField field) throws UnsupportedEncodingException {
+	private int subByte(byte[] bts, int offset, IsoField field) throws Exception {
 		byte[] val = null;
 		int length = field.getLength();
 
@@ -338,7 +366,7 @@ public abstract class AbstractIsoMsgFactory {
 	 * @param start
 	 * @return
 	 */
-	public static byte[] getBitmap(byte[] code, int start) {
+	private static byte[] getBitmap(byte[] code, int start) {
 
 		StringBuffer binary = new StringBuffer();
 		// String str = new String(binary);
@@ -392,34 +420,28 @@ public abstract class AbstractIsoMsgFactory {
 	}
 
 	// 子域合并
-	private void compare(IsoPackage pack) {
-		IsoField isoField_60 = pack.getIsoField("60");
-		IsoField isoField_90 = pack.getIsoField("90");
-		try {
-			if (isoField_60.getValue() != null) {
-				String[] son_60 = { "60.1", "60.2.1", "60.2.2", "60.2.3", "60.2.4", "60.2.5", "60.2.6", "60.2.7",
-						"60.2.8", "60.2.9", "60.3.1", "60.3.2", "60.3.3", "60.3.4", "60.3.5", "60.3.6", "60.3.7",
-						"60.3.8" };
-				StringBuffer sb = new StringBuffer();
-				for (String string : son_60) {
-					sb.append(pack.getIsoField(string).getValue());
+	private void compare(Map<String, String> map) {
+		if (map.get("60") != null) {
+			String[] son_60 = { "60.1", "60.2.1", "60.2.2", "60.2.3", "60.2.4", "60.2.5", "60.2.6", "60.2.7", "60.2.8",
+					"60.2.9", "60.3.1", "60.3.2", "60.3.3", "60.3.4", "60.3.5", "60.3.6", "60.3.7", "60.3.8", "60.3.9",
+					"60.3.10" };
+			StringBuffer sb = new StringBuffer();
+			for (String string : son_60) {
+				if (map.get(string) != null) {
+					sb.append(map.get(string));
 				}
-				isoField_60.setByteValue(EncodeUtil.ascii(sb.toString()));
-				isoField_60.setValue(sb.toString());
 			}
-			if (isoField_90.getValue() != null) {
-				String[] son_90 = { "90.1", "90.2", "90.3", "90.4", "90.5"};
-				StringBuffer sb = new StringBuffer();
-				for (String string : son_90) {
-					sb.append(pack.getIsoField(string).getValue());
+			map.put("60", sb.toString());
+		}
+		if (map.get("90") != null) {
+			String[] son_90 = { "90.1", "90.2", "90.3", "90.4", "90.5" };
+			StringBuffer sb = new StringBuffer();
+			for (String string : son_90) {
+				if (map.get(string) != null) {
+					sb.append(map.get(string));
 				}
-				isoField_90.setByteValue(EncodeUtil.ascii(sb.toString()));
-				isoField_90.setValue(sb.toString());
 			}
-		} catch (UnsupportedEncodingException e) {
-			// 编码异常
-			e.printStackTrace();
-			throw new Simple8583Exception("60/90 域值编码异常");
+			map.put("90", sb.toString());
 		}
 	}
 }
