@@ -1,40 +1,35 @@
 package com.worldline.isa.util;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.stereotype.Component;
 
+@Component
 @Configuration
 public class ServerApplicationContext {
 
 	private final static ClassPathXmlApplicationContext dubbo_context = new ClassPathXmlApplicationContext("spring-dubbo.xml");
 
-//	@InitBinder
-	public void init() {
-//		dubbo_context = new ClassPathXmlApplicationContext("spring-dubbo.xml");
-	}
+	private final static ApplicationContext spring_context = new ClassPathXmlApplicationContext("applicationContext.xml");
 	
-	@InitBinder
-	public static void start() {
+	public ServerApplicationContext() {
 		if(!dubbo_context.isRunning()) {
 			dubbo_context.start();
 		}
 	}
 	
-	private static Object getBean(Object Key){
-		if (Key instanceof String) {
-			return dubbo_context.getBean((String) Key);
-		} else if (Key instanceof Class) {
-			return dubbo_context.getBean((Class) Key);
-		}
-		return "Error";
+//	@InitBinder
+	public void init() {
+//		dubbo_context = new ClassPathXmlApplicationContext("spring-dubbo.xml");
 	}
 	
-	public static ClassPathXmlApplicationContext getDubboContext() {
-		if(dubbo_context.isRunning()) {
-			return dubbo_context;
-		}
-		return null;
+	public static Object getDubboBean(String Key){
+		return dubbo_context.getBean(Key);
+	}
+	
+	public static Object getSpringBean(String Key) {
+		return spring_context.getBean(Key);
 	}
 	
 }

@@ -2,13 +2,14 @@ package com.worldline.isa.Listener;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.netty.channel.ChannelHandlerContext;
 
 public class DefaultExceptionListener extends ExceptionListenerAdapter {
 
-    private static final Logger log = org.apache.log4j.Logger.getLogger(DefaultExceptionListener.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultExceptionListener.class);
 
     @Override
     public void onEventException(Exception e, List<Object> args) {

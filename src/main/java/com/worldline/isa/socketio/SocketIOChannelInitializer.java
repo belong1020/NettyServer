@@ -1,14 +1,15 @@
 package com.worldline.isa.socketio;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //import org.apache.log4j.spi.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.worldline.isa.handler.AuthHandler;
 import com.worldline.isa.handler.PackHandler;
 import com.worldline.isa.handler.UnpackHandler;
-import com.worldline.isa.schedular.CancelableScheduler;
-import com.worldline.isa.schedular.HashedWheelTimeoutScheduler;
+import com.worldline.isa.service.api.ServiceAdapter;
+import com.worldline.isa.util.ServerApplicationContext;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,18 +23,15 @@ public class SocketIOChannelInitializer extends ChannelInitializer<Channel> {
 	public static final String AUTHORIZE_HANDLER = "AuthHandler";
 	public static final String PACK_HANDLER = "PackHandler";
 
-	private static final Logger log = Logger.getLogger(SocketIOChannelInitializer.class);
+	private static final Logger log = LoggerFactory.getLogger(SocketIOChannelInitializer.class);
 
 	// handler
 	private UnpackHandler unpackHandler;
 	private AuthHandler authHandler;
 	private PackHandler packHandler;
 
-	private CancelableScheduler scheduler = new HashedWheelTimeoutScheduler();
-
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) {
-		scheduler.update(ctx);
 	}
 
 	/**
@@ -47,7 +45,7 @@ public class SocketIOChannelInitializer extends ChannelInitializer<Channel> {
 		ChannelPipeline pipeline = ch.pipeline();
 		
 		unpackHandler = new UnpackHandler();
-		authHandler = new AuthHandler();
+		authHandler = new AuthHandler((ServiceAdapter)ServerApplicationContext.getDubboBean("serviceAdapter"));
 		packHandler = new PackHandler();
 		
 		pipeline.addLast(UNPACK_HANDLER, unpackHandler);
@@ -57,9 +55,6 @@ public class SocketIOChannelInitializer extends ChannelInitializer<Channel> {
 	}
 
 	public void stop() {
-		// StoreFactory factory = configuration.getStoreFactory();
-		// factory.shutdown();
-		scheduler.shutdown();
 	}
 
 }

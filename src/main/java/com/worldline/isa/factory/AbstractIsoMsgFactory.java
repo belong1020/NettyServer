@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public abstract class AbstractIsoMsgFactory {
 	public byte[] pack(Map<String, String> dataMap, final IsoPackage pack) throws IOException, ClassNotFoundException {
 		// 深度拷贝，对拷贝后的对象进行操作，
 		// IsoPackage packClone = pack.deepClone();
-
+//		dataFieldList   bitmap对应list
 		List<Integer> dataFieldList = new ArrayList<Integer>(dataMap.size());
 		for (String key : dataMap.keySet()) {
 			IsoField field = pack.getIsoField(key);
@@ -93,13 +94,15 @@ public abstract class AbstractIsoMsgFactory {
 		boolean hasBitMap = false;
 		BitMap bitMap = null;
 		// 0 - 60 1 - 90
-		byte[] index_xx = new byte[10];
+		byte[] index_xx = new byte[2];
+		
+		Map<IsoField, Integer> fldLensMap = new IdentityHashMap<IsoField, Integer>();
 
 		for (IsoField field : pack) {
 			if (field.isAppData()) {
 				if (hasBitMap) {
 					// 子域在此拆分已存进returnMap 中父域
-					if (field.getId().matches("(.*)\\.(.*)")) {
+					if (field.getId().indexOf('.') > 0) {
 						// 重复returnMap.get() 稍微影响性能
 						if (addSonField("60", returnMap, field, index_xx, 0)) {
 							offset += subByte(bts, offset, field);
@@ -400,8 +403,6 @@ public abstract class AbstractIsoMsgFactory {
 				StringBuffer sb = new StringBuffer();
 				for (String string : son_60) {
 					sb.append(pack.getIsoField(string).getValue());
-//					pack.getIsoField(string).se
-//					byte[] byteValue = pack.getIsoField(string).getByteValue();
 				}
 				isoField_60.setByteValue(EncodeUtil.ascii(sb.toString()));
 				isoField_60.setValue(sb.toString());

@@ -1,10 +1,7 @@
 package com.worldline.isa.bootstrap;
 
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.worldline.isa.socketio.NettyServer;
+import com.worldline.isa.util.ServerApplicationContext;
 
 /**
  * Netty Server bootstrap class
@@ -16,16 +13,15 @@ public class ServerBootstrap{
 	public static Thread t1 ;
 	
 	public static void main(String[] args) {
-		ApplicationContext ctx=new ClassPathXmlApplicationContext("applicationContext.xml");
-        NettyServer nettyServer=(NettyServer) ctx.getBean("nettyServer");
+        NettyServer nettyServer=(NettyServer) ServerApplicationContext.getSpringBean("nettyServer");
         
 		nettyServer.start();
 		
+//		System.out.println("llllllll");
 //		nettyServer.stop();
 		
 	}
 	
-	@Test
 	public static void InitThread(){
 		t1 = new Thread(() -> {
 			try {
@@ -36,16 +32,11 @@ public class ServerBootstrap{
 		});
 	}
 	
-	@Test
 	public static void startServer() {
 		t1.start();
 
 	}
 	
-	@Test
-	public static void stop(){
-		
-	}
 	
 	
 }

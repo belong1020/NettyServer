@@ -149,7 +149,8 @@ public class BitMap {
 		}
 		return accum.toString();
 	}
-
+	
+/*
 	public static void main(String[] args) {
 //		BitMap bitArray = new BitMap(64);
 //		bitArray.addBits("1,2,15,");
@@ -178,6 +179,5 @@ public class BitMap {
 			c++;
 		}
 		System.out.println(accum.toString());
-	}
-
+	}*/
 }

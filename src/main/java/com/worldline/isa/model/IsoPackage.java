@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -41,6 +40,7 @@ import javax.xml.bind.annotation.XmlElement;
      * @return
      */
     public IsoField getIsoField(String key){
+    	int lastIndexOf = this.lastIndexOf(key);
     	for(IsoField isoField:this){
     		if(isoField.getId().equalsIgnoreCase(key)){
     			return isoField;

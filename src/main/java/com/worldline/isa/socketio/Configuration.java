@@ -17,13 +17,6 @@ package com.worldline.isa.socketio;
 
 import java.io.InputStream;
 
-//import com.corundumstudio.socketio.handler.SuccessAuthorizationListener;
-//import com.corundumstudio.socketio.listener.DefaultExceptionListener;
-//import com.corundumstudio.socketio.listener.ExceptionListener;
-//import com.corundumstudio.socketio.protocol.JsonSupport;
-//import com.corundumstudio.socketio.store.MemoryStoreFactory;
-//import com.corundumstudio.socketio.store.StoreFactory;
-
 import javax.net.ssl.KeyManagerFactory;
 
 import org.springframework.beans.factory.annotation.Value;
