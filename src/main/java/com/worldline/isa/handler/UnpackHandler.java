@@ -26,44 +26,42 @@ import io.netty.util.AttributeKey;
 // 标示一个ChannelHandler可以被多个 Channel 安全地共享
 @Sharable
 public class UnpackHandler extends ChannelInboundHandlerAdapter {
-	
-	//log
+
+	// log
 	private static Logger logger = LoggerFactory.getLogger(UnpackHandler.class);
-	//全局INDEX
-	public static final AttributeKey<String> ISO_INDEX_KEY = AttributeKey
-			.valueOf("iso.index");
-	//生成随机终端交易流水号
+	// 全局INDEX
+	public static final AttributeKey<String> ISO_INDEX_KEY = AttributeKey.valueOf("iso.index");
+	// 生成随机终端交易流水号
 	private static TraceGenerator tg;
-	
-	static{
+
+	public UnpackHandler() {
 		tg = TraceGenerator.getInstance();
 	}
-	
+
 	/**
-	 * 接收消息, 数据解包处理类 
+	 * 接收消息, 数据解包处理类
 	 * 
 	 * @param ctx
 	 * @param msg
 	 * @throws Exception
 	 */
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg)
-			throws Exception {
-		//No.
+	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		// No.
 		String thisIndex = new SimpleDateFormat("yyyyMMdd").format(new Date()) + tg.nextTrace();
 		logger.info("[receiveMessage] NO." + thisIndex + " . ");
-		
+
 		ByteBuf in = (ByteBuf) msg;
 		byte[] req = new byte[in.readableBytes()];
 		in.readBytes(req);
-		Map<String, String> unpackAdapter = PackageAdapter.unpackAdapter(req,"iso8583-DPI");
-		
+		Map<String, String> unpackAdapter = PackageAdapter.unpackAdapter(req, "iso8583-DPI");
+
 		logger.info("[unPackMessage] NO." + thisIndex + " Finished. ");
 		// 直接获取AttributeMap 但是是线程安全，本Channel 创建的key 对应的value
-		
+
 		// 只能这个Channel 修改，其他Channel 不能直接修改
 		Attribute<String> attr2 = ctx.attr(ISO_INDEX_KEY);
-		//存No.
+		// 存No.
 		attr2.getAndSet(thisIndex);
 
 		// 通知执行下一个InboundHandler
@@ -79,7 +77,8 @@ public class UnpackHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		// 打印异常栈跟踪
-		logger.error("Isa_Msg_UnpackHandler[MessageError] NO.{}  {}.", ctx.channel().attr(ISO_INDEX_KEY).get() , cause.getLocalizedMessage() );
+		logger.error("Isa_Msg_UnpackHandler[MessageError] NO.{}  {}.", ctx.channel().attr(ISO_INDEX_KEY).get(),
+				cause.getMessage());
 		// 关闭该Channel
 		ctx.close();
 	}

@@ -36,6 +36,7 @@ public class TestClientHandler0003 extends SimpleChannelInboundHandler<ByteBuf> 
 	public void channelActive(ChannelHandlerContext ctx) {
 
 		Map<String, String> message = new HashMap<String, String>();
+		message.put("MsgLength", "0347");
 		message.put("HeaderLength", "46");
 		message.put("HeaderFlagandVersion", "82");
 		message.put("TotalMessageLength", "0347");

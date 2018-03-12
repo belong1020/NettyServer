@@ -139,7 +139,7 @@ public class IsoField implements Serializable {
 			break;
 		}
 		// 子域不直接参与的打包
-		if (this.id.matches("(.*)\\.(.*)")) {
+		if (this.id.indexOf(".") > 0) {
 			this.checked = false;
 		}
 	}

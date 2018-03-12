@@ -35,30 +35,20 @@ public abstract class AbstractIsoMsgFactory {
 
 	// 入口和出口
 	public byte[] pack(Map<String, String> dataMap, final IsoPackage pack) throws Exception {
-		String split = dataMap.get(SimpleConstants.BIT_MAP);
+		String bitMapString = dataMap.get(SimpleConstants.BIT_MAP);
 		StringBuilder sb = new StringBuilder();
-				
-		byte[] bitMapByte ;// = dataMap.get(SimpleConstants.BIT_MAP).toString().getBytes();
-		BitMap bitMap = new BitMap(split.length());
-		bitMapByte = bitMap.addBits(dataMap.get(SimpleConstants.BIT_MAP));
+
+		byte[] bitMapByte;// =
+							// dataMap.get(SimpleConstants.BIT_MAP).toString().getBytes();
+		BitMap bitMap = new BitMap(bitMapString.length());
+		bitMapByte = bitMap.addBits(bitMapString);
 		pack.getIsoField(SimpleConstants.BIT_MAP).setByteValue(bitMapByte);
-		
-//		BitMap bitMap = null;
-		if (dataMap.get(SimpleConstants.BIT_MAP).length() < 65) {
-			bitMap = new BitMap(64);
-		} else {
-			pack.setBit64(false);
-			bitMap = new BitMap(128);
-		}
-//		byte[] bitMapByte = bitMap.addBits(dataFieldList);
-		pack.getIsoField(SimpleConstants.BIT_MAP).setByteValue(bitMapByte);
-		
+
+		pack.setBit64(bitMapByte.length == 64);
+
 		compare(dataMap);
 
 		// 设置BitMap的值
-		IsoField BitField = pack.getIsoField(SimpleConstants.BIT_MAP);
-		// BitField.setValue(dataMap.get(SimpleConstants.BIT_MAP));
-		BitField.setByteValue(bitMapByte);
 
 		for (IsoField field : pack) {
 			String fieldValue;
@@ -74,7 +64,7 @@ public abstract class AbstractIsoMsgFactory {
 				}
 				if (bitMap.getBit(index - 1) == 1) {
 					field.setValue(fieldValue);
-					field.setByteValue(fieldValue.getBytes());
+//					field.setByteValue(fieldValue.getBytes());
 				}
 			} else {
 				fieldValue = dataMap.get(field.getId());
@@ -88,7 +78,6 @@ public abstract class AbstractIsoMsgFactory {
 			}
 		}
 
-		// 将数组合并
 		switch ("") {
 		case "MASTER":
 			break;
@@ -132,9 +121,9 @@ public abstract class AbstractIsoMsgFactory {
 					if (field.getId().indexOf('.') > 0) {
 						// 重复returnMap.get() 稍微影响性能
 						if (addSonField("60", returnMap, field, index_xx, 0)) {
-							offset += subByte(bts, offset, field);
+//							offset += subByte(bts, offset, field);
 						} else if (addSonField("90", returnMap, field, index_xx, 1)) {
-							offset += subByte(bts, offset, field);
+//							offset += subByte(bts, offset, field);
 						}
 						continue;
 					}
@@ -146,9 +135,9 @@ public abstract class AbstractIsoMsgFactory {
 					if (bitMap.getBit(index - 1) == 1) {
 						offset += subByte(bts, offset, field);
 						if ("60".equals(field.getId())) {
-							offset -= field.getLength() - 3;
+//							offset -= field.getLength() - 3 ;
 						} else if ("90".equals(field.getId())) {
-							offset -= field.getLength();
+//							offset -= field.getLength();
 						}
 						returnMap.put(field.getId(), field.getValue());
 					}
@@ -189,10 +178,10 @@ public abstract class AbstractIsoMsgFactory {
 	 */
 	private boolean addSonField(String mapKey, Map<String, String> returnMap, IsoField field, byte[] index_xx,
 			int index) {
-		if (returnMap.get(mapKey) != null && mapKey.equals(field.getId().substring(0, 2))
-				&& !mapKey.equals(field.getId())) {
+		String fatherValue = returnMap.get(mapKey);
+		if (fatherValue != null && fatherValue.length() > index_xx[index]) {
 			returnMap.put(field.getId(),
-					returnMap.get(mapKey).substring(index_xx[index], index_xx[index] + field.getLength()));
+					fatherValue.substring(index_xx[index], index_xx[index] + field.getLength()));
 			index_xx[index] += field.getLength();
 			return true;
 		}
